@@ -2,20 +2,20 @@ package lex
 
 import "github.com/karim-w/kinter/go/tokens"
 
-type Lexer struct {
+type Entity struct {
 	input        string
 	position     int  // current position in input (points to current char)
 	readPosition int  // current reading position in input (after current char)
 	ch           byte // current char under examination
 }
 
-func New(input string) *Lexer {
-	l := &Lexer{input: input}
+func New(input string) *Entity {
+	l := &Entity{input: input}
 	l.readChar()
 	return l
 }
 
-func (l *Lexer) readChar() {
+func (l *Entity) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0 // ASCII code for "NUL" (null character)
 	} else {
@@ -25,7 +25,7 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
-func (l *Lexer) NextToken() tokens.Entity {
+func (l *Entity) NextToken() tokens.Entity {
 	var tok tokens.Entity
 
 	l.skipWhitespace()
@@ -71,13 +71,13 @@ func newToken(tokenType tokens.Token, ch byte) tokens.Entity {
 	return tokens.Entity{Type: tokenType, Literal: string(ch)}
 }
 
-func (l *Lexer) skipWhitespace() {
+func (l *Entity) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
-func (l *Lexer) readIdentifier() string {
+func (l *Entity) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) {
 		l.readChar()
@@ -89,7 +89,7 @@ func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z'
 }
 
-func (l *Lexer) readNumber() string {
+func (l *Entity) readNumber() string {
 	position := l.position
 	for isDigit(l.ch) {
 		l.readChar()
